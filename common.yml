@@ -1,14 +1,5 @@
 version: "3.9"
 services:
-  reverse-proxy:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - ${NGINX_LISTEN_PORT}:${NGINX_LISTEN_PORT}
-    restart: unless-stopped
-    env_file:
-      - .env
   orthanc:
     build:
       context: ./orthanc
@@ -33,15 +24,18 @@ services:
       dockerfile: Dockerfile
     command: >
       monailabel start_server 
-      --app /app/radiology 
+      --app /app/monaibundle 
       --studies ${SERVER} 
-      --conf models segmentation 
+      --conf models renalStructures_UNEST_segmentation 
       --conf use_pretrained_model false 
-      --conf skip_scoring false 
-      --conf skip_strategies false 
-      --conf epistemic_enabled true
     ports:
       - 8000:8000
+    # IPC set to host
+    ipc: 'host'
+    net: 'host'
+    ulimit: 
+      memlock: 1
+      stack: 67108864
     restart: unless-stopped
     environment:
       - http_proxy=  # need to be unset for docker to docker communication
@@ -49,6 +43,8 @@ services:
       - MONAI_LABEL_DICOMWEB_PASSWORD=${PW}
       - MONAI_LABEL_DICOMWEB_SEARCH_FILTER=${SEARCH_FILTER}
       - MONAI_LABEL_DICOMWEB_READ_TIMEOUT=60.0
-      - MONAI_LABEL_API_STR=/monailabel
+      - MONAI_LABEL_API_STR=
     volumes:
-      - ${LOCAL_WORKSPACE}/model/:/app/radiology/model/  # store models
+      - ${LOCAL_WORKSPACE}/model/:/app/monaibundle/model/  # store models
+      - ${LOCAL_WORKSPACE}/monailabel_cache:/root/.cache/monailabel
+      # - ${LOCAL_WORKSPACE}/dist-packages:/usr/local/lib/python3.10/dist-packages # uncomment to debug and fix monailabel

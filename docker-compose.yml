@@ -1,25 +1,20 @@
 version: "3.9"
 services:
-  reverse-proxy:
-    extends:
-      file: common.yml
-      service: reverse-proxy
   orthanc:
     extends:
       file: common.yml
       service: orthanc
-    depends_on: [reverse-proxy]
   monailabel:
     extends:
       file: common.yml
       service: monailabel
-    depends_on: [reverse-proxy, orthanc]
+    depends_on: [orthanc]
     deploy:
       resources:
         reservations:
           devices:
             - driver: nvidia
-              count: 1
+              device_ids: ['0']
               capabilities: [gpu]
 secrets:
   orthanc.json:
