@@ -27,7 +27,9 @@ services:
       --app /app/monaibundle 
       --studies ${SERVER} 
       --conf models renalStructures_UNEST_segmentation 
-      --conf use_pretrained_model false 
+      --conf use_pretrained_model false
+      --conf skip_trainers true
+      --conf preload false
     ports:
       - 8000:8000
     # IPC set to host
