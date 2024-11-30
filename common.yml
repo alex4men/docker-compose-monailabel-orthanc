@@ -16,8 +16,8 @@ services:
       - USERNAME=${USERNAME}
       - PW=${PW}
     volumes:
-      - ${LOCAL_WORKSPACE}/db-index/:/var/lib/orthanc/db-index  #cannot be saved to network mount
-      - ${IMAGE_MOUNT}/db-index/:/var/lib/orthanc/db
+      - ${LOCAL_WORKSPACE}/orthanc_db/db-index:/var/lib/orthanc/db-index #cannot be saved to network mount
+      - ${LOCAL_WORKSPACE}/orthanc_db/db:/var/lib/orthanc/db
   monailabel:
     build:
       context: ./monailabel
@@ -47,6 +47,6 @@ services:
       - MONAI_LABEL_DICOMWEB_READ_TIMEOUT=60.0
       - MONAI_LABEL_API_STR=
     volumes:
-      - ${LOCAL_WORKSPACE}/model/:/app/monaibundle/model/  # store models
+      - ${LOCAL_WORKSPACE}/../monai_models:/app/monaibundle/model  # store models
       - ${LOCAL_WORKSPACE}/monailabel_cache:/root/.cache/monailabel
       # - ${LOCAL_WORKSPACE}/dist-packages:/usr/local/lib/python3.10/dist-packages # uncomment to debug and fix monailabel
